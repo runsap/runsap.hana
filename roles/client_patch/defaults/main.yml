@@ -1,0 +1,3 @@
+software_location: "{{host_data.vm.tags.Sap_software_share}}/Sap_hana_client/{{host_data.vm.tags.Sap_hana_target_client}}/SAP_HANA_CLIENT"
+hdbclient_location: "/usr/sap/{{sap_sid|upper}}/hdbclient"
+target_version: "{{host_data.vm.tags.Sap_hana_target_client}}"

@@ -1,0 +1,11 @@
+---
+- name: Check if software exists
+  block:
+  - name: Is software available '{{software_location}}'
+    stat:
+      path: "{{software_location}}"
+    register: software_available
+  - name: Software not available
+    fail:
+      msg: "The new software '{{software_location}}' is not available"
+    when: software_available.stat.exists == false
