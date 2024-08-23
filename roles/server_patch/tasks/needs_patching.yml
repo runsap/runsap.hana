@@ -1,0 +1,55 @@
+- name: Inform user that patching is needed
+  ansible.builtin.debug: 
+    msg: "Patching is need for system: src={{current_version}} target={{target_version}}"
+
+- name: Check update user credentials
+  include_tasks: check-update-user-credentials.yml
+  when: sap_role == "prim"
+
+- name: Report - Store action in variable
+  ansible.builtin.set_fact:
+    custom_change_summary:
+      "Patch SAP HANA Server on {{inventory_hostname}} from {{current_version}} to {{target_version}}"
+  check_mode: false # run in check mode  
+
+- name: Copy installation input file to "/tmp/hana-db-server-patch.cfg"
+  template:
+      src: "templates/hana-db-server-patch.cfg.j2" # on the ansible host
+      dest: "/tmp/hana-db-server-patch.cfg"
+      mode: '0644'
+  when: not ansible_check_mode  
+
+- name: check-software
+  include_tasks: check-software.yml
+
+- block:
+    - name: Display pre install message
+      ansible.builtin.debug:
+        msg:
+          - ' '
+          - ' The installation will start in the next step:'
+          - ' - This takes up to 15 minutes'
+          - ' - Sit back, relax and enjoy the ride'
+          - ' '
+          
+    - name: Patch SAP HANA DB to configured patch level
+      expect:
+        command: "sudo /sap_installation_software/SAP_HANA_CURRENT/hdblcm --configfile=/tmp/hana-db-server-patch.cfg --components=all --action=update --batch"
+        timeout: 3600 # 60 minuten
+        responses:
+          (?i)password: "{{ lookup('env', 'ANSIBLE_REMOTE_USER_PASSWORD') }}"
+      register: hanapatching
+
+    - name: Output of HANA Patching
+      ansible.builtin.debug: 
+        msg: "{{hanapatching.stdout_lines}}"
+    - name: Output of HANA Patching (stderr)
+      ansible.builtin.debug:
+        msg: "{{ hanapatching.stderr_lines | default('Geen fouten opgetreden') }}"
+  when: not ansible_check_mode
+
+- name: Remove installation batch/config file
+  ansible.builtin.file: 
+    path: "/tmp/hana-db-server-patch.cfg"
+    state: absent 
+  when: not ansible_check_mode 

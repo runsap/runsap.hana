@@ -1,0 +1,15 @@
+---
+- name: What is the current sap hana version
+  ansible.builtin.shell: | 
+    set timeout 20 
+    /usr/sap/{{sap_sid|upper}}/HDB50/HDB version
+  register: hdbversion
+  become: true
+  become_user: "{{sap_sid}}adm"
+  args:
+      executable: /bin/csh
+  
+- name: Show version of SAP HANA DB
+  ansible.builtin.debug: 
+    msg: "{{hdbversion.stdout_lines}}"
+  #ignore_errors: "{{ ansible_check_mode }}" 
