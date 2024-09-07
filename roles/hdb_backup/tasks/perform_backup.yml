@@ -13,6 +13,9 @@
 
             Take a break.
 
+            backup_location: {{ backup_location }}
+            backup_name: {{ backup_name }}
+            
       --------------------------------------------------------------------
   when: not ansible_check_mode
 

@@ -7,7 +7,7 @@
 - include_tasks: perform_backup.yml
   vars:
     backup_method: FILE
-    backup_name: "{{ backup_location ~ '/' ~ backup_name ~ '/' }}"
+    backup_name: "{{ backup_location ~ '/' ~ backup_filename ~ '/' }}"
   when: 
     - backup_type == 'file'    
 
