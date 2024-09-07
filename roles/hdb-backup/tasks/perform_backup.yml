@@ -1,0 +1,32 @@
+- set_fact:
+    custom_change_summary: "{{ custom_change_summary | default([]) + [ message ] }}"
+  vars:
+    message: "New backup will be created using backint" 
+  when: ansible_check_mode
+
+- name: Inform user that backup will be started
+  debug:
+    msg: |
+      --------------------------------------------------------------------
+            
+            The backup will be started in the next step. 
+
+            Take a break.
+
+      --------------------------------------------------------------------
+  when: not ansible_check_mode
+
+- name: Perform backup
+  shell: "{{ backup_command }}"
+  vars:
+    secure_params: >-
+      {%- if secure_connection -%}
+      -e -ssltrustcert
+      {%- endif -%}
+    backup_command: >
+      /usr/sap/{{hdb_sid|upper}}/HDB{{instance_nr}}/exe/hdbsql {{ secure_params }} -i {{ instance_nr }} -U {{ hdbsql_key }} 
+      "BACKUP DATA FOR {{ hdb_db | upper }} USING {{ backup_method }} ('{{ backup_name }}')"
+  environment:  
+    LD_LIBRARY_PATH: "/usr/sap/{{hdb_sid|upper}}/HDB{{instance_nr}}/exe"
+  become: true
+  become_user: "{{ hdb_sid }}adm"    

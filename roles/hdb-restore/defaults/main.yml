@@ -1,0 +1,3 @@
+instance_nr: 50
+hdbsql_key: HDB_SYSTEMDB
+waittimeout: 3600

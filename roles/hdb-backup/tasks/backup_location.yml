@@ -1,0 +1,7 @@
+- name: Ensure backup directory exists
+  file:
+    path: "{{ backup_location }}/{{ backup_name }}"
+    state: directory
+    recurse: true
+    mode: 0775
+    owner: "{{ hdb_sid }}adm"
