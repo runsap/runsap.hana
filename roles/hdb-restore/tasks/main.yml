@@ -1,0 +1,4 @@
+# RECOVER DATABASE 
+# https://help.sap.com/docs/HANA_SERVICE_CF/7c78579ce9b14a669c1f3295b0d8ca16/93637a07e3b544398aa02de1541b903c.html
+#- include_tasks: stop_database.yml
+- include_tasks: perform_restore.yml
