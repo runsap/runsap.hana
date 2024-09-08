@@ -1,4 +1,3 @@
-- block:
 - name: Inform user that restore will be started
   debug:
     msg: |
