@@ -10,8 +10,13 @@
       --------------------------------------------------------------------
   when: not ansible_check_mode
 
-- name: Perform stop database
-  shell: "{{ backup_command }}"
+- blcok:
+  - debug: var=backup_command
+  - name: Perform stop database
+    shell: "{{ backup_command }}"
+    become: true
+    become_user: "{{ hdb_db | lower }}adm"
+
   vars:
     secure_params: >-
       {%- if secure_connection -%}
@@ -20,9 +25,7 @@
     backup_command: >-
       source ~/.sapenv.sh && hdbsql {{ secure_params }} -i {{ instance_nr }} -U {{ hdbsql_key }} "{{ sql }}"
     sql: "ALTER SYSTEM STOP DATABASE {{ hdb_db | upper }}"
-  become: true
-  become_user: "{{ hdb_db | lower }}adm"
-
+  
 
 # - name: Perform restore
 #   shell: "{{ backup_command }}"
