@@ -1,3 +1,4 @@
+- block:
 - name: Inform user that restore will be started
   debug:
     msg: |
@@ -10,7 +11,7 @@
       --------------------------------------------------------------------
   when: not ansible_check_mode
 
-- name: Perform restore
+- name: Perform stop database
   shell: "{{ backup_command }}"
   vars:
     secure_params: >-
@@ -18,9 +19,23 @@
       -e -ssltrustcert
       {%- endif -%}
     backup_command: >-
-      source ~/.sapenv.sh && hdbsql {{ secure_params }} -i {{ instance_nr }} -U {{ hdbsql_key }} "{{ item }}"
-  loop:
-    - "ALTER SYSTEM STOP DATABASE {{ hdb_db | upper }}"
-    - "RECOVER DATA FOR {{ hdb_db | upper }} USING FILE ('{{ backup_path }}') CLEAR LOG"
+      source ~/.sapenv.sh && hdbsql {{ secure_params }} -i {{ instance_nr }} -U {{ hdbsql_key }} "{{ sql }}"
+    sql: "ALTER SYSTEM STOP DATABASE {{ hdb_db | upper }}"
   become: true
   become_user: "{{ hdb_db | lower }}adm"
+
+
+# - name: Perform restore
+#   shell: "{{ backup_command }}"
+#   vars:
+#     secure_params: >-
+#       {%- if secure_connection -%}
+#       -e -ssltrustcert
+#       {%- endif -%}
+#     backup_command: >-
+#       source ~/.sapenv.sh && hdbsql {{ secure_params }} -i {{ instance_nr }} -U {{ hdbsql_key }} "{{ item }}"
+#   loop:
+#     - "ALTER SYSTEM STOP DATABASE {{ hdb_db | upper }}"
+#     - "RECOVER DATA FOR {{ hdb_db | upper }} USING FILE ('{{ backup_path }}') CLEAR LOG"
+#   become: true
+#   become_user: "{{ hdb_db | lower }}adm"
