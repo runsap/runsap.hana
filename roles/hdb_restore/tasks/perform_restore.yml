@@ -10,7 +10,7 @@
       --------------------------------------------------------------------
   when: not ansible_check_mode
 
-- blcok:
+- block:
   - debug: var=backup_command
   - name: Perform stop database
     shell: "{{ backup_command }}"
