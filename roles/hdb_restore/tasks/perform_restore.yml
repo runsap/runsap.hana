@@ -24,7 +24,8 @@
       {%- endif -%}
     backup_command: >-
       /usr/sap/{{ hdb_sid | upper }}/HDB{{ instance_nr }}/exe/hdbsql {{ secure_params }} -U {{ hdbsql_key }} {{ sql }}
-    sql: "RECOVER DATA FOR {{ hdb_db | upper }} USING FILE ('{{ backup_path }}') CLEAR LOG"
+    sql: "RECOVER DATA FOR {{ hdb_db | upper }} USING FILE '{{ backup_path }}' CLEAR LOG"
+#    sql: "RECOVER DATA FOR {{ hdb_db | upper }} USING FILE ('{{ backup_path }}') CLEAR LOG"
 
 
 # - name: Perform restore
