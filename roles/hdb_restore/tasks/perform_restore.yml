@@ -10,15 +10,13 @@
       --------------------------------------------------------------------
   when: not ansible_check_mode
 
-- block:
-  - debug: var=backup_command
-  - name: Perform stop database
+
+- name: Perform stop database
     shell: "{{ backup_command }}"      
     args:
       executable: /bin/bash
     become: true
     become_user: "{{ hdb_db | lower }}adm"
-
   vars:
     secure_params: >-
       {%- if secure_connection -%}
@@ -26,9 +24,8 @@
       {%- endif -%}
     backup_command: >-
       /usr/sap/{{ hdb_sid | upper }}/HDB{{ instance_nr }}/exe/hdbsql {{ secure_params }} -U {{ hdbsql_key }} {{ sql }}
-#      source ~/.sapenv.sh && hdbsql {{ secure_params }} -i {{ instance_nr }} -U {{ hdbsql_key }} "{{ sql }}"
-    sql: "ALTER SYSTEM STOP DATABASE {{ hdb_db | upper }}"
-  
+    sql: "RECOVER DATA FOR {{ hdb_db | upper }} USING FILE ('{{ backup_path }}') CLEAR LOG"
+
 
 # - name: Perform restore
 #   shell: "{{ backup_command }}"

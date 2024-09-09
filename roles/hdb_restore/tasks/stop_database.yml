@@ -1,15 +1,16 @@
-- name: Stop SAP Instance 
-  shell: "source ~/.sapenv.sh && sapcontrol -nr {{ instance_nr }} -function Stop"
-  become: true
-  become_user: "{{ hdb_sid }}adm"
-  args:
-    executable: /bin/bash
-
-- name: Wait for stopped 
-  shell: "source ~/.sapenv.sh && sapcontrol -nr {{ instance_nr }} -function WaitforStopped {{ waittimeout }} 2"
-  register: outs
-  become: true
-  become_user: "{{ hdb_sid }}adm" 
-  args:
-    executable: /bin/bash
-- debug: var=outs  
+- block:
+  - debug: var=backup_command
+  - name: Perform stop database
+    shell: "{{ backup_command }}"      
+    args:
+      executable: /bin/bash
+    become: true
+    become_user: "{{ hdb_db | lower }}adm"
+  vars:
+    secure_params: >-
+      {%- if secure_connection -%}
+      -e -ssltrustcert
+      {%- endif -%}
+    backup_command: >-
+      /usr/sap/{{ hdb_sid | upper }}/HDB{{ instance_nr }}/exe/hdbsql {{ secure_params }} -U {{ hdbsql_key }} {{ sql }}
+    sql: "ALTER SYSTEM STOP DATABASE {{ hdb_db | upper }}"
