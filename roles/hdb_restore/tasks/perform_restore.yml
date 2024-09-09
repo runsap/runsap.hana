@@ -11,8 +11,8 @@
   when: not ansible_check_mode
 
 
-- name: Perform stop database
-    shell: "{{ backup_command }}"      
+- name: Perform restore database
+  shell: "{{ backup_command }}"      
     args:
       executable: /bin/bash
     become: true
