@@ -13,7 +13,9 @@
 - block:
   - debug: var=backup_command
   - name: Perform stop database
-    shell: "{{ backup_command }}"
+    shell: "{{ backup_command }}"      
+    args:
+      executable: /bin/bash
     become: true
     become_user: "{{ hdb_db | lower }}adm"
 
@@ -23,7 +25,8 @@
       -e -ssltrustcert
       {%- endif -%}
     backup_command: >-
-      source ~/.sapenv.sh && hdbsql {{ secure_params }} -i {{ instance_nr }} -U {{ hdbsql_key }} "{{ sql }}"
+      hdbsql {{ secure_params }} -U {{ hdbsql_key }} {{ sql }}
+#      source ~/.sapenv.sh && hdbsql {{ secure_params }} -i {{ instance_nr }} -U {{ hdbsql_key }} "{{ sql }}"
     sql: "ALTER SYSTEM STOP DATABASE {{ hdb_db | upper }}"
   
 
