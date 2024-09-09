@@ -13,10 +13,10 @@
 
 - name: Perform restore database
   shell: "{{ backup_command }}"      
-    args:
-      executable: /bin/bash
-    become: true
-    become_user: "{{ hdb_db | lower }}adm"
+  args:
+    executable: /bin/bash
+  become: true
+  become_user: "{{ hdb_db | lower }}adm"
   vars:
     secure_params: >-
       {%- if secure_connection -%}
