@@ -25,7 +25,7 @@
       -e -ssltrustcert
       {%- endif -%}
     backup_command: >-
-      /usr/sap/H4F/HDB50/exe/hdbsql {{ secure_params }} -U {{ hdbsql_key }} {{ sql }}
+      source ~/.sapenv.sh; hdbsql {{ secure_params }} -U {{ hdbsql_key }} {{ sql }}
 #      source ~/.sapenv.sh && hdbsql {{ secure_params }} -i {{ instance_nr }} -U {{ hdbsql_key }} "{{ sql }}"
     sql: "ALTER SYSTEM STOP DATABASE {{ hdb_db | upper }}"
   
