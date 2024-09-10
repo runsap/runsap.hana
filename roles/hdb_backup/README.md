@@ -1,9 +1,12 @@
-# sap-hana-db-backup
+sap-hana-db-backup
+==================
 
+Introduction
+------------
 Creates a sap hana database backup on the filesystem.
 
-## Example
-
+Example
+-------
 Example task to create a backup on filesystem:
 
 ```
