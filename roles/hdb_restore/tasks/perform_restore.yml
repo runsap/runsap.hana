@@ -1,18 +1,17 @@
 - name: Inform user that restore will be started
-  debug:
+  ansible.builtin.debug:
     msg: |
       --------------------------------------------------------------------
-            
-            The restore will be started in the next step. 
+
+            The restore will be started in the next step.
 
             Take a break.
 
       --------------------------------------------------------------------
   when: not ansible_check_mode
 
-
 - name: Perform restore database
-  shell: "{{ backup_command }}"      
+  ansible.builtin.shell: "{{ backup_command }}"
   args:
     executable: /bin/bash
   become: true
@@ -20,27 +19,8 @@
   vars:
     secure_params: >-
       {%- if secure_connection -%}
-      -e -ssltrustcert
-      {%- endif -%}
+      -e -ssltrustcert{%- endif -%}
     backup_command: |
-      /usr/sap/{{ hdb_sid | upper }}/HDB{{ instance_nr }}/exe/hdbsql {{ secure_params }} -U {{ hdbsql_key }} "{{ sql }}"    
+      /usr/sap/{{ hdb_sid | upper }}/HDB{{ instance_nr }}/exe/hdbsql {{ secure_params }} -U {{ hdbsql_key }} "{{ sql }}"
     sql: |
       RECOVER DATA FOR {{ hdb_db | upper }} USING FILE ('{{ backup_path }}') CLEAR LOG
-
-#    sql: "RECOVER DATA FOR {{ hdb_db | upper }} USING FILE ('{{ backup_path }}') CLEAR LOG"
-
-
-# - name: Perform restore
-#   shell: "{{ backup_command }}"
-#   vars:
-#     secure_params: >-
-#       {%- if secure_connection -%}
-#       -e -ssltrustcert
-#       {%- endif -%}
-#     backup_command: >-
-#       source ~/.sapenv.sh && hdbsql {{ secure_params }} -i {{ instance_nr }} -U {{ hdbsql_key }} "{{ item }}"
-#   loop:
-#     - "ALTER SYSTEM STOP DATABASE {{ hdb_db | upper }}"
-#     - "RECOVER DATA FOR {{ hdb_db | upper }} USING FILE ('{{ backup_path }}') CLEAR LOG"
-#   become: true
-#   become_user: "{{ hdb_db | lower }}adm"

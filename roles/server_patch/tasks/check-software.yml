@@ -1,11 +1,12 @@
 - name: Get HDB server version
-  ansible.builtin.shell: "grep fullversion {{software_location}}/server/manifest"
+  ansible.builtin.command: "grep fullversion {{ software_location }}/server/manifest"
   register: getversiononshare
-  check_mode: no # run in check mode
-  changed_when: 0 # don't show as changed
+  check_mode: false # run in check mode
+  changed_when: false # don't show as changed
   become: true
-  become_user: "{{sap_sid}}adm"
-  
-- fail: 
+  become_user: "{{ sap_sid }}adm"
+
+- name: Fail when needed
+  ansible.builtin.fail:
     msg: "SAP HANA Server software not found. Aborting. Fail."
   when: not target_version in getversiononshare.stdout

@@ -1,15 +1,18 @@
-# sap-hana-db-backup
+sap-hana-db-backup
+==================
 
+Introduction
+------------
 Creates a sap hana database backup on the filesystem.
 
-## Example
-
+Example
+-------
 Example task to create a backup on filesystem:
 
 ```
-- include_role: 
+- include_role:
     name: sap-hana-db-backup
-    vars: 
+    vars:
         secure_connection: true
         backup_location: "/backup/{{ hdb_db | upper }}"
         backup_name: "{{ cli_backup_name | default(hdb_db ~ '_' ~ lookup('pipe', 'date +\"%Y-%m-%d_%H%M%S\"')) }}"
