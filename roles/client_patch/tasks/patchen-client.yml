@@ -1,18 +1,20 @@
 - name: check the prerequisites for the hana client patch
   include_tasks: check-software.yml
-- block:
-  - name: Patch the SAP HDB Client
-    ansible.builtin.command: "{{software_location}}/hdbinst -a client -p /usr/sap/{{sap_sid|upper}}/hdbclient -s {{sap_sid|upper}}"
-    register: hana_client_patch_result
-  - name: Output of hana client patch
-    ansible.builtin.debug:
-      msg: "{{hana_client_patch_result.stdout_lines}}"
-  - name: Output of hana client patch (error)
-    ansible.builtin.debug:
-      msg: "{{hana_client_patch_result.stderr_lines}}"
-  - name: "Show updated HDB client version: more /usr/sap/sap_sid/hdbclient/manifest | grep fullversion"      
-    ansible.builtin.shell: "more {{hdbclient_location}}/manifest | grep fullversion"
-    register: saphananewclientversion
-  - ansible.builtin.debug: 
-      msg: "Update SAP HANA Client {{saphananewclientversion.stdout_lines}}"
-  when: not ansible_check_mode    
+
+- name: If not in check mode
+  block:
+    - name: Patch the SAP HDB Client
+      ansible.builtin.command: "{{software_location}}/hdbinst -a client -p /usr/sap/{{sap_sid|upper}}/hdbclient -s {{sap_sid|upper}}"
+      register: hana_client_patch_result
+    - name: Output of hana client patch
+      ansible.builtin.debug:
+        msg: "{{hana_client_patch_result.stdout_lines}}"
+    - name: Output of hana client patch (error)
+      ansible.builtin.debug:
+        msg: "{{hana_client_patch_result.stderr_lines}}"
+    - name: "Show updated HDB client version: more /usr/sap/sap_sid/hdbclient/manifest | grep fullversion"
+      ansible.builtin.shell: "grep fullversion {{ hdbclient_location }}/manifest"
+      register: saphananewclientversion
+    - ansible.builtin.debug:
+        msg: "Update SAP HANA Client {{saphananewclientversion.stdout_lines}}"
+  when: not ansible_check_mode

@@ -1,16 +1,18 @@
-- block:
-  - debug: var=backup_command
-  - name: Perform stop database
-    shell: "{{ backup_command }}"      
-    args:
-      executable: /bin/bash
-    become: true
-    become_user: "{{ hdb_db | lower }}adm"
+- name: Block thing
+  block:
+    - name: Debug output
+      ansible.builtin.debug: var=backup_command
+
+    - name: Perform stop database
+      ansible.builtin.shell: "{{ backup_command }}"
+      args:
+        executable: /bin/bash
+      become: true
+      become_user: "{{ hdb_db | lower }}adm"
   vars:
     secure_params: >-
       {%- if secure_connection -%}
-      -e -ssltrustcert
-      {%- endif -%}
+      -e -ssltrustcert{%- endif -%}
     backup_command: >-
       /usr/sap/{{ hdb_sid | upper }}/HDB{{ instance_nr }}/exe/hdbsql {{ secure_params }} -U {{ hdbsql_key }} {{ sql }}
     sql: "ALTER SYSTEM STOP DATABASE {{ hdb_db | upper }}"

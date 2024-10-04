@@ -1,21 +1,25 @@
-- name: Get the current sap hana version # (in x.x.x.x)
-  ansible.builtin.shell: | 
+- name: Get the current SAP HANA version
+  ansible.builtin.shell: |
+    set -o pipefail  # Enable pipefail option to detect errors in pipelines
     set timeout 20
-    /usr/sap/{{ sap_sid | upper }}/HDB50/HDB version | grep 'version:' | awk '{ print $NF }' | awk {{awk}}
+    /usr/sap/{{ sap_sid | upper }}/HDB50/HDB version | grep 'version:' | awk '{ print $NF }' | awk {{ awk }}
   vars:
     awk: -F'.' '{ print $1"."$2"."$3"."$4 }'
   register: hdbtargetversion
-  check_mode: false # run in check mode
+  check_mode: false
   become: true
-  become_user: "{{sap_sid}}adm"
+  become_user: "{{ sap_sid }}adm"
 
-- block:
-    - ansible.builtin.debug: 
-        msg: "Hoeft niet te patchen: src={{current_version}} target={{target_version}}"
+- name: Showing version
+  block:
+    - name: Show debug
+      ansible.builtin.debug:
+        msg: "Hoeft niet te patchen: src={{ current_version }} target={{ target_version }}"
         verbosity: 2
       when: current_version == target_version
-                 
-    - include_tasks: needs_patching.yml
+
+    - name: Include needs patching
+      ansible.builtin.include_tasks: needs_patching.yml
       when: current_version != target_version
   vars:
-    current_version: "{{hdbtargetversion.stdout}}"
+    current_version: "{{ hdbtargetversion.stdout }}"

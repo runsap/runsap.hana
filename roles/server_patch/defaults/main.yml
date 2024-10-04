@@ -1,4 +1,4 @@
-hana_instance_nr: "{{ instance_nr.hana | default('50')}}"
-software_location: "{{host_data.vm.tags.Sap_software_share}}/SAP_HANA_CURRENT"
+hana_instance_nr: "{{ instance_nr.hana | default('50') }}"
+software_location: "{{ host_data.vm.tags.Sap_software_share }}/SAP_HANA_CURRENT"
 system_db_port: "3{{ hana_instance_nr }}13"
-target_version: "{{host_data.vm.tags.Sap_hana_target_database}}"
+target_version: "{{ host_data.vm.tags.Sap_hana_target_database }}"

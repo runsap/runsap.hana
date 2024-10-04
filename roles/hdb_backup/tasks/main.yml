@@ -1,18 +1,19 @@
----
-
-- block:
-    - include_tasks: backup_location.yml
-    - include_tasks: perform_backup.yml
+- name: File backup
+  block:
+    - name: Inlcude location
+      ansible.builtin.include_tasks: backup_location.yml
+    - name: Perform backup
+      ansible.builtin.include_tasks: perform_backup.yml
   vars:
     backup_method: FILE
     backup_location: "{{ backup_path ~ '/' }}"
-  when: 
-    - backup_type == 'file'    
+  when:
+    - backup_type == 'file'
 
-- include_tasks: perform_backup.yml
+- ansible.builtin.include_tasks: perform_backup.yml
   vars:
     backup_method: BACKINT
     timestamp: "{{ lookup('pipe', 'date +\"%Y%m%d%H%M%S\"') }}"
     backup_name: "{{ timestamp }}/"
-  when: 
-    - backup_type == 'backint'    
+  when:
+    - backup_type == 'backint'
