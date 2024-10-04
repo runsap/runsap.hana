@@ -4,3 +4,4 @@
   ansible.builtin.include_tasks: stop_database.yml
 - name: Do the restore
   ansible.builtin.include_tasks: perform_restore.yml
+
