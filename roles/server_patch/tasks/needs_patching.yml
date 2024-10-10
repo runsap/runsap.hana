@@ -36,7 +36,7 @@
 
     - name: Patch SAP HANA DB to configured patch level
       ansible.builtin.expect:
-        command: "sudo /sap_installation_software/SAP_HANA_CURRENT/hdblcm --configfile=/tmp/hana-db-server-patch.cfg --components=all --action=update --batch"
+        command: "sudo {{ software_location }}/hdblcm --configfile=/tmp/hana-db-server-patch.cfg --components=all --action=update --batch"
         timeout: 3600 # 60 minuten
         responses:
           (?i)password: "{{ lookup('env', 'ANSIBLE_REMOTE_USER_PASSWORD') }}"
