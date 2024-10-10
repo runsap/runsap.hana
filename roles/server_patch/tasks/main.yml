@@ -2,7 +2,7 @@
   ansible.builtin.shell: |
     set -o pipefail  # Enable pipefail option to detect errors in pipelines
     set timeout 20
-    /usr/sap/{{ sap_sid | upper }}/HDB50/HDB version | grep 'version:' | awk '{ print $NF }' | awk {{ awk }}
+    /usr/sap/{{ sap_sid | upper }}/HDB{{ hana_instance_nr }}/HDB version | grep 'version:' | awk '{ print $NF }' | awk {{ awk }}
   vars:
     awk: -F'.' '{ print $1"."$2"."$3"."$4 }'
   register: hdbtargetversion
