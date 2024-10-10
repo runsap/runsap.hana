@@ -5,7 +5,7 @@ ConfirmPython2ToPython3Switch=Yes
 
 [Server]
 system_user={{ hana_update_user }}
-system_user_password='{{ hana_update_user_password }}'
+system_user_password='{{ hana_update_user_password  | replace('"', '') }}'
 
 # Installation Path
 sapmnt=/hana/shared
